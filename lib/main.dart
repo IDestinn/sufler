@@ -38,7 +38,6 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  final hideAppbar = true;
   final ScrollController _scrollController = ScrollController();
   String _maintext =
       "Добро пожаловать в приложение телесуфлера! Чтобы ввести свой собственный текст нажмите на первую кнопку на нижней панеле инструментов";
@@ -49,7 +48,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: hideAppbar ? AppBar() : null,
+      appBar: AppBar(
+        toolbarHeight: 0.0,
+      ),
       body: SafeArea(
           child: Column(children: [
         WindowTitleBarBox(
