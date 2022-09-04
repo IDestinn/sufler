@@ -10,6 +10,7 @@ void main() {
 
   doWhenWindowReady(() {
     appWindow.minSize = const Size(600, 450);
+    appWindow.size = const Size(1920, 1080);
     appWindow.title = "Atom Prompter";
     appWindow.alignment = Alignment.center;
     appWindow.show();
@@ -108,7 +109,9 @@ class _MyHomePageState extends State<MyHomePage> {
                     return TextFieldPage(oldmaintext: _maintext);
                   }));
                   setState(() {
-                    _maintext = newmaintext;
+                    if (newmaintext != null) {
+                      _maintext = newmaintext;
+                    }
                   });
                 },
                 icon: const Icon(Icons.border_color, size: 25),
