@@ -2,8 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
+import 'package:flutter/services.dart';
 import 'package:sufler/textchangepage.dart';
 import 'windowbuttons.dart';
+
+class StartAndPauseUse extends Intent {}
 
 void main() {
   runApp(const MyApp());
@@ -49,170 +52,191 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        toolbarHeight: 0.0,
-      ),
-      body: SafeArea(
-          child: Column(children: [
-        WindowTitleBarBox(
-          child: Row(
-            children: [Expanded(child: MoveWindow()), const WindowButtons()],
-          ),
+        appBar: AppBar(
+          toolbarHeight: 0.0,
         ),
-        Expanded(
-            child: ListView(controller: _scrollController, children: [
-          Container(
-            color: const Color.fromARGB(255, 15, 15, 15),
-            alignment: Alignment.center,
-            height: 200,
-            width: double.infinity,
-            child: Text(
-              "Начало",
-              style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontSize: textsize,
-                  color: const Color.fromARGB(255, 238, 238, 238)),
-              textAlign: TextAlign.center,
+        body: SafeArea(
+            child: Column(children: [
+          WindowTitleBarBox(
+            child: Row(
+              children: [Expanded(child: MoveWindow()), const WindowButtons()],
             ),
           ),
-          Text(_maintext,
-              style: TextStyle(
-                  fontSize: textsize,
-                  color: const Color.fromARGB(255, 238, 238, 238))),
-          Container(
-            color: const Color.fromARGB(255, 15, 15, 15),
-            alignment: Alignment.topCenter,
-            padding: const EdgeInsets.only(top: 200),
-            height: appWindow.size.height - 85,
-            width: double.infinity,
-            child: Text(
-              "Конец",
-              style: TextStyle(
-                  fontStyle: FontStyle.italic,
-                  fontSize: textsize,
-                  color: const Color.fromARGB(255, 238, 238, 238)),
+          Expanded(
+              child: ListView(controller: _scrollController, children: [
+            Container(
+              color: const Color.fromARGB(255, 15, 15, 15),
+              alignment: Alignment.center,
+              height: 200,
+              width: double.infinity,
+              child: Text(
+                "Начало",
+                style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: textsize,
+                    color: const Color.fromARGB(255, 238, 238, 238)),
+                textAlign: TextAlign.center,
+              ),
             ),
-          ),
-        ]))
-      ])),
-      bottomNavigationBar: BottomAppBar(
-        color: const Color.fromARGB(255, 23, 23, 23),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            IconButton(
-                onPressed: () async {
-                  stopTimer();
-                  _scrollController.position.hold(() {});
-                  final newmaintext = await Navigator.push(context,
-                      MaterialPageRoute(builder: (context) {
-                    return TextFieldPage(oldmaintext: _maintext);
-                  }));
-                  setState(() {
-                    if (newmaintext != null) {
-                      _maintext = newmaintext;
-                    }
-                  });
-                },
-                icon: const Icon(Icons.border_color, size: 25),
-                tooltip: "Текст",
-                color: const Color.fromARGB(255, 204, 204, 204)),
-            startAndPause(),
-            IconButton(
-                onPressed: () {
-                  _scrollController
-                      .jumpTo(_scrollController.position.minScrollExtent);
-                  stopTimer();
-                },
-                icon: const Icon(Icons.restore, size: 25),
-                tooltip: "Заново",
-                color: const Color.fromARGB(255, 204, 204, 204)),
-            const SizedBox(
-              height: 50,
-              width: 50,
+            Text(_maintext,
+                style: TextStyle(
+                    fontSize: textsize,
+                    color: const Color.fromARGB(255, 238, 238, 238))),
+            Container(
+              color: const Color.fromARGB(255, 15, 15, 15),
+              alignment: Alignment.topCenter,
+              padding: const EdgeInsets.only(top: 200),
+              height: appWindow.size.height - 85,
+              width: double.infinity,
+              child: Text(
+                "Конец",
+                style: TextStyle(
+                    fontStyle: FontStyle.italic,
+                    fontSize: textsize,
+                    color: const Color.fromARGB(255, 238, 238, 238)),
+              ),
             ),
-            Row(children: [
-              Text(
-                speedmultiplayer.round().toString(),
-                style: const TextStyle(
-                  color: Color.fromARGB(255, 204, 204, 204),
-                  fontSize: 20,
+          ]))
+        ])),
+        bottomNavigationBar: Shortcuts(
+            shortcuts: {
+              LogicalKeySet(LogicalKeyboardKey.space): StartAndPauseUse(),
+            },
+            child: Actions(
+              actions: {
+                StartAndPauseUse: CallbackAction<StartAndPauseUse>(
+                  onInvoke: (intent) =>
+                      timer!.isActive ? stopButtonPress() : startButtonPress(),
+                )
+              },
+              child: BottomAppBar(
+                color: const Color.fromARGB(255, 23, 23, 23),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    IconButton(
+                        onPressed: () async {
+                          stopTimer();
+                          _scrollController.position.hold(() {});
+                          final newmaintext = await Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return TextFieldPage(oldmaintext: _maintext);
+                          }));
+                          setState(() {
+                            if (newmaintext != null) {
+                              _maintext = newmaintext;
+                            }
+                          });
+                        },
+                        icon: const Icon(Icons.border_color, size: 25),
+                        tooltip: "Текст",
+                        color: const Color.fromARGB(255, 204, 204, 204)),
+                    startAndPause(),
+                    IconButton(
+                        onPressed: () {
+                          _scrollController.jumpTo(
+                              _scrollController.position.minScrollExtent);
+                          stopTimer();
+                        },
+                        icon: const Icon(Icons.restore, size: 25),
+                        tooltip: "Заново",
+                        color: const Color.fromARGB(255, 204, 204, 204)),
+                    const SizedBox(
+                      height: 50,
+                      width: 50,
+                    ),
+                    Row(children: [
+                      Text(
+                        speedmultiplayer.round().toString(),
+                        style: const TextStyle(
+                          color: Color.fromARGB(255, 204, 204, 204),
+                          fontSize: 20,
+                        ),
+                      ),
+                      Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Slider(
+                                value: speedmultiplayer,
+                                min: 1,
+                                max: 40,
+                                divisions: 39,
+                                onChanged: (value) => setState(() {
+                                      speedmultiplayer = value;
+                                      timeToReachEnd = (_scrollController
+                                                  .position.maxScrollExtent -
+                                              _scrollController
+                                                  .position.pixels) /
+                                          (7 * speedmultiplayer);
+                                      (timer == null ? false : timer!.isActive)
+                                          ? animateToMaxMin(
+                                              _scrollController
+                                                  .position.maxScrollExtent,
+                                              timeToReachEnd.round() == 0
+                                                  ? 1
+                                                  : timeToReachEnd.round(),
+                                              _scrollController)
+                                          : null;
+                                    })),
+                          ]),
+                      const Icon(Icons.speed,
+                          size: 25, color: Color.fromARGB(255, 204, 204, 204)),
+                    ]),
+                    Row(
+                      children: [
+                        Text(
+                          textsize.round().toString(),
+                          style: const TextStyle(
+                            color: Color.fromARGB(255, 204, 204, 204),
+                            fontSize: 20,
+                          ),
+                        ),
+                        Column(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Slider(
+                                  value: textsize,
+                                  min: 14,
+                                  max: 180,
+                                  divisions: 166,
+                                  onChanged: (value) => setState(() {
+                                        textsize = value;
+                                        timeToReachEnd = (_scrollController
+                                                    .position.maxScrollExtent -
+                                                _scrollController
+                                                    .position.pixels) /
+                                            (7 * speedmultiplayer);
+                                        (timer == null
+                                                ? false
+                                                : timer!.isActive)
+                                            ? animateToMaxMin(
+                                                _scrollController
+                                                    .position.maxScrollExtent,
+                                                timeToReachEnd.round() == 0
+                                                    ? 1
+                                                    : timeToReachEnd.round(),
+                                                _scrollController)
+                                            : null;
+                                      })),
+                            ]),
+                        const Icon(Icons.text_format,
+                            size: 25, color: Color.fromARGB(255, 204, 204, 204))
+                      ],
+                    ),
+                    const SizedBox(
+                      height: 50,
+                      width: 50,
+                    ),
+                    Text(timerText(),
+                        style: const TextStyle(
+                            color: Color.fromARGB(255, 238, 238, 238),
+                            fontSize: 30))
+                  ],
                 ),
               ),
-              Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Slider(
-                        value: speedmultiplayer,
-                        min: 1,
-                        max: 40,
-                        divisions: 39,
-                        onChanged: (value) => setState(() {
-                              speedmultiplayer = value;
-                              timeToReachEnd =
-                                  (_scrollController.position.maxScrollExtent -
-                                          _scrollController.position.pixels) /
-                                      (7 * speedmultiplayer);
-                              animateToMaxMin(
-                                  _scrollController.position.maxScrollExtent,
-                                  timeToReachEnd.round() == 0
-                                      ? 1
-                                      : timeToReachEnd.round(),
-                                  _scrollController);
-                            })),
-                  ]),
-              const Icon(Icons.speed,
-                  size: 25, color: Color.fromARGB(255, 204, 204, 204)),
-            ]),
-            Row(
-              children: [
-                Text(
-                  textsize.round().toString(),
-                  style: const TextStyle(
-                    color: Color.fromARGB(255, 204, 204, 204),
-                    fontSize: 20,
-                  ),
-                ),
-                Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Slider(
-                          value: textsize,
-                          min: 14,
-                          max: 180,
-                          divisions: 166,
-                          onChanged: (value) => setState(() {
-                                textsize = value;
-                                timeToReachEnd = (_scrollController
-                                            .position.maxScrollExtent -
-                                        _scrollController.position.pixels) /
-                                    (7 * speedmultiplayer);
-                                animateToMaxMin(
-                                    _scrollController.position.maxScrollExtent,
-                                    timeToReachEnd.round() == 0
-                                        ? 1
-                                        : timeToReachEnd.round(),
-                                    _scrollController);
-                                startTimer();
-                              })),
-                    ]),
-                const Icon(Icons.text_format,
-                    size: 25, color: Color.fromARGB(255, 204, 204, 204))
-              ],
-            ),
-            const SizedBox(
-              height: 50,
-              width: 50,
-            ),
-            Text(timerText(),
-                style: const TextStyle(
-                    color: Color.fromARGB(255, 238, 238, 238), fontSize: 30))
-          ],
-        ),
-      ),
-    );
+            )));
   }
 
   animateToMaxMin(
@@ -242,22 +266,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return isRunning
         ? IconButton(
             onPressed: () {
-              stopTimer();
-              _scrollController.position.hold(() {});
+              stopButtonPress();
             },
             icon: const Icon(Icons.pause),
             tooltip: ("Пауза"),
             color: const Color.fromARGB(255, 204, 204, 204))
         : IconButton(
             onPressed: () {
-              timeToReachEnd = (_scrollController.position.maxScrollExtent -
-                      _scrollController.position.pixels) /
-                  (7 * speedmultiplayer);
-              animateToMaxMin(
-                  _scrollController.position.maxScrollExtent,
-                  timeToReachEnd.round() == 0 ? 1 : timeToReachEnd.round(),
-                  _scrollController);
-              startTimer();
+              startButtonPress();
             },
             icon: const Icon(Icons.play_arrow),
             tooltip: ("Старт"),
@@ -270,5 +286,21 @@ class _MyHomePageState extends State<MyHomePage> {
         ? timeToReachEnd.round() % 60
         : '0${timeToReachEnd.round() % 60}';
     return '$tTextMinutes:$tTextSeconds';
+  }
+
+  startButtonPress() {
+    timeToReachEnd = (_scrollController.position.maxScrollExtent -
+            _scrollController.position.pixels) /
+        (7 * speedmultiplayer);
+    animateToMaxMin(
+        _scrollController.position.maxScrollExtent,
+        timeToReachEnd.round() == 0 ? 1 : timeToReachEnd.round(),
+        _scrollController);
+    startTimer();
+  }
+
+  stopButtonPress() {
+    stopTimer();
+    _scrollController.position.hold(() {});
   }
 }
