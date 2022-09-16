@@ -13,7 +13,7 @@ void main() {
 
   doWhenWindowReady(() {
     appWindow.minSize = const Size(600, 450);
-    appWindow.size = const Size(1920, 1080);
+    appWindow.size = const Size(1280, 720);
     appWindow.title = "Atom Prompter";
     appWindow.alignment = Alignment.center;
     appWindow.show();
