@@ -2,23 +2,22 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Atom Prompter"
-#define MyAppVersion "0.1"
+#define MyAppVersion "0.2"
 #define MyAppExeName "sufler.exe"
 
 [Setup]
 ; NOTE: The value of AppId uniquely identifies this application. Do not use the same AppId value in installers for other applications.
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
-AppId={{0E01EC1F-C00A-4D0B-83CA-CC02D541E3A2}
+AppId={{7242421B-CE31-4EB0-BF3B-6B286E9C88ED}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 ;AppVerName={#MyAppName} {#MyAppVersion}
-DefaultDirName=D:\{#MyAppName}
+DefaultDirName=C:\{#MyAppName}
 DisableProgramGroupPage=yes
 ; Remove the following line to run in administrative install mode (install for all users.)
 PrivilegesRequired=lowest
 OutputDir=D:\sufler\Sufler\installers
-OutputBaseFilename=prompter_setup
-SetupIconFile=D:\sufler\Sufler\installers\atom_icon_191749.ico
+OutputBaseFilename=Prompter_setup
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -31,8 +30,8 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "D:\sufler\Sufler\build\windows\runner\Release\{#MyAppExeName}"; DestDir: "{app}"; Flags: ignoreversion
-Source: "D:\sufler\Sufler\build\windows\runner\Release\bitsdojo_window_windows_plugin.lib"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\sufler\Sufler\build\windows\runner\Release\flutter_windows.dll"; DestDir: "{app}"; Flags: ignoreversion
+Source: "D:\sufler\Sufler\build\windows\runner\Release\bitsdojo_window_windows_plugin.lib"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\sufler\Sufler\build\windows\runner\Release\sufler.exp"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\sufler\Sufler\build\windows\runner\Release\sufler.lib"; DestDir: "{app}"; Flags: ignoreversion
 Source: "D:\sufler\Sufler\build\windows\runner\Release\data\*"; DestDir: "{app}\data"; Flags: ignoreversion recursesubdirs createallsubdirs
