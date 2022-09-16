@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/services.dart';
 import 'package:sufler/textchangepage.dart';
-import 'windowbuttons.dart';
 
 class StartAndPauseUse extends Intent {}
 
@@ -57,11 +56,6 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
       body: SafeArea(
           child: Column(children: [
-        WindowTitleBarBox(
-          child: Row(
-            children: [Expanded(child: MoveWindow()), const WindowButtons()],
-          ),
-        ),
         Expanded(
             child: ListView(controller: _scrollController, children: [
           Container(
